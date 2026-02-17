@@ -1,17 +1,8 @@
-import { IsString, IsNumber, IsISO8601, IsUUID } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 
-export class CreateRecordDto {
-  @IsUUID()
-  userId: string;
-
+export class CreateMealDto {
   @IsString()
-  category: string;
-
-  @IsString()
-  mealName: string;
-
-  @IsISO8601()
-  date: string;
+  name: string;
 
   @IsNumber()
   kcal: number;
