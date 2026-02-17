@@ -5,6 +5,12 @@ export class Record {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @PrimaryGeneratedColumn('uuid')
+  userId: string;
+
+  @Column({ type: 'varchar' })
+  mealName: string;
+
   @Column({ type: 'varchar' })
   category: string;
 
@@ -24,11 +30,14 @@ export class Record {
   protein: number;
 
   @Column({ type: 'float' })
-  salt: number;
+  carb: number;
 
   @Column({ type: 'float' })
   sugar: number;
 
   @Column({ type: 'float' })
-  carb: number;
+  salt: number;
+
+  @Column({ type: 'float' })
+  fibre: number;
 }

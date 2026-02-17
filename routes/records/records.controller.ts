@@ -9,8 +9,8 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { RecordsService } from './records.service';
-import { CreateRecordDto } from '../dto/create-record.dto';
-import { UpdateRecordDto } from '../dto/update-record.dto';
+import { CreateRecordDto } from '../../dto/records/create-record.dto';
+import { UpdateRecordDto } from '../../dto/records/update-record.dto';
 import { Record } from './record.entity';
 
 @Controller('records')

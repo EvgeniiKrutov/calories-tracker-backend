@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Record } from './record.entity';
-import { CreateRecordDto } from '../dto/create-record.dto';
-import { UpdateRecordDto } from '../dto/update-record.dto';
+import { CreateRecordDto } from '../../dto/records/create-record.dto';
+import { UpdateRecordDto } from '../../dto/records/update-record.dto';
 
 @Injectable()
 export class RecordsService {

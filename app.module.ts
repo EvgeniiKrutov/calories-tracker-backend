@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RecordsModule } from './records/records.module';
-import { Record } from './records/record.entity';
+import { RecordsModule } from './routes/records/records.module';
+import { Record } from './routes/records/record.entity';
 
 @Module({
   imports: [
