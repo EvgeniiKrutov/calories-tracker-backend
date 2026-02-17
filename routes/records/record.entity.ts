@@ -5,7 +5,7 @@ export class Record {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @PrimaryGeneratedColumn('uuid')
+  @Column({ type: 'uuid' })
   userId: string;
 
   @Column({ type: 'varchar' })

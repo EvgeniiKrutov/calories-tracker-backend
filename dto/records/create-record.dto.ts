@@ -1,6 +1,9 @@
-import { IsString, IsNumber, IsISO8601 } from 'class-validator';
+import { IsString, IsNumber, IsISO8601, IsUUID } from 'class-validator';
 
 export class CreateRecordDto {
+  @IsUUID()
+  userId: string;
+
   @IsString()
   category: string;
 
@@ -20,11 +23,14 @@ export class CreateRecordDto {
   protein: number;
 
   @IsNumber()
-  salt: number;
+  carb: number;
 
   @IsNumber()
   sugar: number;
 
   @IsNumber()
-  carb: number;
+  salt: number;
+
+  @IsNumber()
+  fibre: number;
 }
