@@ -10,6 +10,11 @@ import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
 import { PaginatedResponseDto } from '../../dto/common/paginated-response.dto';
 import { DailySummaryQueryDto } from '../../dto/records/daily-summary-query.dto';
 import { DailySummaryResponseDto } from '../../dto/records/daily-summary-response.dto';
+import {
+  ChartQueryDto,
+  ChartPeriod,
+} from '../../dto/records/chart-query.dto';
+import { ChartResponseDto } from '../../dto/records/chart-response.dto';
 import { roundTo2 } from '../../utils/rounding';
 
 @Injectable()
@@ -77,6 +82,54 @@ export class RecordsService {
       sugar: Number(result?.sugar ?? 0),
       salt: Number(result?.salt ?? 0),
       fibre: Number(result?.fibre ?? 0),
+    };
+  }
+
+  async chart(query: ChartQueryDto): Promise<ChartResponseDto> {
+    const { userId, period, category } = query;
+    const { start, end } = this.resolveRange(query);
+
+    const rows = await this.recordsRepository
+      .createQueryBuilder('record')
+      .select('SUBSTR(record.date, 1, 10)', 'date')
+      .addSelect(`COALESCE(SUM(record.${category}), 0)`, 'value')
+      .where('record.userId = :userId', { userId })
+      .andWhere('record.date >= :start', { start })
+      .andWhere('record.date < :end', { end })
+      .groupBy('SUBSTR(record.date, 1, 10)')
+      .orderBy('SUBSTR(record.date, 1, 10)', 'ASC')
+      .getRawMany<{ date: string; value: string }>();
+
+    return {
+      userId,
+      category,
+      period,
+      start,
+      end,
+      points: rows.map((row) => ({
+        date: row.date,
+        value: roundTo2(Number(row.value)),
+      })),
+    };
+  }
+
+  private resolveRange(query: ChartQueryDto): { start: string; end: string } {
+    if (query.period === ChartPeriod.Custom) {
+      const startDay = query.start!.slice(0, 10);
+      const endDate = new Date(`${query.end!.slice(0, 10)}T00:00:00.000Z`);
+      endDate.setUTCDate(endDate.getUTCDate() + 1);
+      return { start: startDay, end: endDate.toISOString().slice(0, 10) };
+    }
+
+    const days = query.period === ChartPeriod.Week ? 7 : 30;
+    const now = new Date();
+    const end = new Date(`${now.toISOString().slice(0, 10)}T00:00:00.000Z`);
+    end.setUTCDate(end.getUTCDate() + 1);
+    const start = new Date(end);
+    start.setUTCDate(start.getUTCDate() - days);
+    return {
+      start: start.toISOString().slice(0, 10),
+      end: end.toISOString().slice(0, 10),
     };
   }
 

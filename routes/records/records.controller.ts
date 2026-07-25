@@ -18,6 +18,8 @@ import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
 import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
 import { DailySummaryQueryDto } from '../../dto/records/daily-summary-query.dto';
 import { DailySummaryResponseDto } from '../../dto/records/daily-summary-response.dto';
+import { ChartQueryDto } from '../../dto/records/chart-query.dto';
+import { ChartResponseDto } from '../../dto/records/chart-response.dto';
 
 @Controller('records')
 export class RecordsController {
@@ -33,6 +35,11 @@ export class RecordsController {
     @Query() query: DailySummaryQueryDto,
   ): Promise<DailySummaryResponseDto> {
     return this.recordsService.dailySummary(query);
+  }
+
+  @Get('chart')
+  chart(@Query() query: ChartQueryDto): Promise<ChartResponseDto> {
+    return this.recordsService.chart(query);
   }
 
   @Get(':id')
