@@ -23,7 +23,7 @@ import { Meal } from './routes/meals/meal.entity';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [Record, Meal],
-        synchronize: true, // disable in production
+        synchronize: true,
       }),
     }),
     RecordsModule,
