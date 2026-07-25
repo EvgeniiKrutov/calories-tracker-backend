@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { Record } from './record.entity';
 import { CreateRecordDto } from '../../dto/records/create-record.dto';
 import { UpdateRecordDto } from '../../dto/records/update-record.dto';
+import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
+import { PaginatedResponseDto } from '../../dto/common/paginated-response.dto';
 
 @Injectable()
 export class RecordsService {
@@ -12,8 +14,16 @@ export class RecordsService {
     private readonly recordsRepository: Repository<Record>,
   ) {}
 
-  async findAll(): Promise<Record[]> {
-    return this.recordsRepository.find({ order: { date: 'DESC' } });
+  async findAll(
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<Record>> {
+    const { page, limit } = query;
+    const [data, total] = await this.recordsRepository.findAndCount({
+      order: { date: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async findOne(id: string): Promise<Record> {

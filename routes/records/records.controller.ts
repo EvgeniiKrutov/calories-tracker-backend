@@ -7,19 +7,22 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { RecordsService } from './records.service';
 import { CreateRecordDto } from '../../dto/records/create-record.dto';
 import { UpdateRecordDto } from '../../dto/records/update-record.dto';
 import { Record } from './record.entity';
+import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
+import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
 
 @Controller('records')
 export class RecordsController {
   constructor(private readonly recordsService: RecordsService) {}
 
   @Get()
-  findAll(): Promise<Record[]> {
-    return this.recordsService.findAll();
+  findAll(@Query() query: PaginationQueryDto): Promise<PaginatedResponseDto<Record>> {
+    return this.recordsService.findAll(query);
   }
 
   @Get(':id')

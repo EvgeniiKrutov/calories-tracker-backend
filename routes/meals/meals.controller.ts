@@ -7,19 +7,24 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { Meal } from './meal.entity';
 import { CreateMealDto } from 'dto/meals/create-meal.dto';
 import { UpdateMealDto } from 'dto/meals/update-meal.dto';
 import { MealsService } from './meals.service';
+import { PaginationQueryDto } from 'dto/common/pagination-query.dto';
+import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
 
 @Controller('meals')
 export class MealsController {
   constructor(private readonly mealsService: MealsService) {}
 
   @Get()
-  findAll(): Promise<Meal[]> {
-    return this.mealsService.findAll();
+  findAll(
+    @Query() query: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<Meal>> {
+    return this.mealsService.findAll(query);
   }
 
   @Get(':id')

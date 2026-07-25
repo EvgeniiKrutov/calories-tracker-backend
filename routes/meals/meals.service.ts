@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { Meal } from './meal.entity';
 import { CreateMealDto } from 'dto/meals/create-meal.dto';
 import { UpdateMealDto } from 'dto/meals/update-meal.dto';
+import { PaginationQueryDto } from 'dto/common/pagination-query.dto';
+import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
 
 @Injectable()
 export class MealsService {
@@ -12,8 +14,15 @@ export class MealsService {
     private readonly mealsRepository: Repository<Meal>,
   ) {}
 
-  async findAll(): Promise<Meal[]> {
-    return this.mealsRepository.find();
+  async findAll(
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResponseDto<Meal>> {
+    const { page, limit } = query;
+    const [data, total] = await this.mealsRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async findOne(id: string): Promise<Meal> {
