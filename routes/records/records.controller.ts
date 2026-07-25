@@ -16,6 +16,8 @@ import { Record } from './record.entity';
 import { RecordResponseDto } from '../../dto/records/record-response.dto';
 import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
 import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
+import { DailySummaryQueryDto } from '../../dto/records/daily-summary-query.dto';
+import { DailySummaryResponseDto } from '../../dto/records/daily-summary-response.dto';
 
 @Controller('records')
 export class RecordsController {
@@ -24,6 +26,13 @@ export class RecordsController {
   @Get()
   findAll(@Query() query: PaginationQueryDto): Promise<PaginatedResponseDto<Record>> {
     return this.recordsService.findAll(query);
+  }
+
+  @Get('summary')
+  dailySummary(
+    @Query() query: DailySummaryQueryDto,
+  ): Promise<DailySummaryResponseDto> {
+    return this.recordsService.dailySummary(query);
   }
 
   @Get(':id')

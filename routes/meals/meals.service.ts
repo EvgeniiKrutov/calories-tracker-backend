@@ -6,6 +6,18 @@ import { CreateMealDto } from 'dto/meals/create-meal.dto';
 import { UpdateMealDto } from 'dto/meals/update-meal.dto';
 import { PaginationQueryDto } from 'dto/common/pagination-query.dto';
 import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
+import { roundNumericFields } from '../../utils/rounding';
+
+const MEAL_NUMERIC_FIELDS: (keyof Meal)[] = [
+  'kcal',
+  'fat',
+  'saturatedFat',
+  'protein',
+  'carb',
+  'sugar',
+  'salt',
+  'fibre',
+];
 
 @Injectable()
 export class MealsService {
@@ -34,13 +46,18 @@ export class MealsService {
   }
 
   async create(dto: CreateMealDto): Promise<Meal> {
-    const meal = this.mealsRepository.create(dto);
+    const meal = this.mealsRepository.create(
+      roundNumericFields(dto, MEAL_NUMERIC_FIELDS as (keyof CreateMealDto)[]),
+    );
     return this.mealsRepository.save(meal);
   }
 
   async update(id: string, dto: UpdateMealDto): Promise<Meal> {
     const meal = await this.findOne(id);
-    Object.assign(meal, dto);
+    Object.assign(
+      meal,
+      roundNumericFields(dto, MEAL_NUMERIC_FIELDS as (keyof UpdateMealDto)[]),
+    );
     return this.mealsRepository.save(meal);
   }
 

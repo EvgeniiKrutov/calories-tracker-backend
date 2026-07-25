@@ -8,6 +8,9 @@ import { UpdateRecordDto } from '../../dto/records/update-record.dto';
 import { RecordResponseDto } from '../../dto/records/record-response.dto';
 import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
 import { PaginatedResponseDto } from '../../dto/common/paginated-response.dto';
+import { DailySummaryQueryDto } from '../../dto/records/daily-summary-query.dto';
+import { DailySummaryResponseDto } from '../../dto/records/daily-summary-response.dto';
+import { roundTo2 } from '../../utils/rounding';
 
 @Injectable()
 export class RecordsService {
@@ -28,6 +31,53 @@ export class RecordsService {
       take: limit,
     });
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
+  async dailySummary(
+    query: DailySummaryQueryDto,
+  ): Promise<DailySummaryResponseDto> {
+    const { userId, date } = query;
+    const day = date.slice(0, 10);
+    const next = new Date(`${day}T00:00:00.000Z`);
+    next.setUTCDate(next.getUTCDate() + 1);
+    const nextDay = next.toISOString().slice(0, 10);
+
+    const result = await this.recordsRepository
+      .createQueryBuilder('record')
+      .select('COALESCE(SUM(record.kcal), 0)', 'kcal')
+      .addSelect('COALESCE(SUM(record.fat), 0)', 'fat')
+      .addSelect('COALESCE(SUM(record.saturatedFat), 0)', 'saturatedFat')
+      .addSelect('COALESCE(SUM(record.protein), 0)', 'protein')
+      .addSelect('COALESCE(SUM(record.carb), 0)', 'carb')
+      .addSelect('COALESCE(SUM(record.sugar), 0)', 'sugar')
+      .addSelect('COALESCE(SUM(record.salt), 0)', 'salt')
+      .addSelect('COALESCE(SUM(record.fibre), 0)', 'fibre')
+      .where('record.userId = :userId', { userId })
+      .andWhere('record.date >= :day', { day })
+      .andWhere('record.date < :nextDay', { nextDay })
+      .getRawOne<{
+        kcal: string;
+        fat: string;
+        saturatedFat: string;
+        protein: string;
+        carb: string;
+        sugar: string;
+        salt: string;
+        fibre: string;
+      }>();
+
+    return {
+      userId,
+      date,
+      kcal: Number(result?.kcal ?? 0),
+      fat: Number(result?.fat ?? 0),
+      saturatedFat: Number(result?.saturatedFat ?? 0),
+      protein: Number(result?.protein ?? 0),
+      carb: Number(result?.carb ?? 0),
+      sugar: Number(result?.sugar ?? 0),
+      salt: Number(result?.salt ?? 0),
+      fibre: Number(result?.fibre ?? 0),
+    };
   }
 
   async findOne(id: string): Promise<RecordResponseDto> {
@@ -52,7 +102,7 @@ export class RecordsService {
       mealName: meal.name,
       category: dto.category,
       date: dto.date,
-      grams: dto.grams,
+      grams: roundTo2(dto.grams),
       ...this.calculateNutrition(meal, dto.grams),
     });
     return this.recordsRepository.save(record);
@@ -74,7 +124,7 @@ export class RecordsService {
       mealName: meal.name,
       category: dto.category ?? record.category,
       date: dto.date ?? record.date,
-      grams,
+      grams: roundTo2(grams),
       ...this.calculateNutrition(meal, grams),
     });
     return this.recordsRepository.save(record);
@@ -99,14 +149,14 @@ export class RecordsService {
   private calculateNutrition(meal: Meal, grams: number) {
     const factor = grams / 100;
     return {
-      kcal: meal.kcal * factor,
-      fat: meal.fat * factor,
-      saturatedFat: meal.saturatedFat * factor,
-      protein: meal.protein * factor,
-      carb: meal.carb * factor,
-      sugar: meal.sugar * factor,
-      salt: meal.salt * factor,
-      fibre: meal.fibre * factor,
+      kcal: roundTo2(meal.kcal * factor),
+      fat: roundTo2(meal.fat * factor),
+      saturatedFat: roundTo2(meal.saturatedFat * factor),
+      protein: roundTo2(meal.protein * factor),
+      carb: roundTo2(meal.carb * factor),
+      sugar: roundTo2(meal.sugar * factor),
+      salt: roundTo2(meal.salt * factor),
+      fibre: roundTo2(meal.fibre * factor),
     };
   }
 }
