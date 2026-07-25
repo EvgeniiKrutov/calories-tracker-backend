@@ -13,6 +13,7 @@ import { RecordsService } from './records.service';
 import { CreateRecordDto } from '../../dto/records/create-record.dto';
 import { UpdateRecordDto } from '../../dto/records/update-record.dto';
 import { Record } from './record.entity';
+import { RecordResponseDto } from '../../dto/records/record-response.dto';
 import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
 import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
 
@@ -26,7 +27,7 @@ export class RecordsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Record> {
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<RecordResponseDto> {
     return this.recordsService.findOne(id);
   }
 

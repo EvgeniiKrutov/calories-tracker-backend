@@ -8,6 +8,9 @@ export class Record {
   @Column({ type: 'uuid' })
   userId: string;
 
+  @Column({ type: 'uuid' })
+  mealId: string;
+
   @Column({ type: 'varchar' })
   mealName: string;
 
@@ -16,6 +19,9 @@ export class Record {
 
   @Column({ type: 'varchar' })
   date: string;
+
+  @Column({ type: 'float' })
+  grams: number;
 
   @Column({ type: 'float' })
   kcal: number;
