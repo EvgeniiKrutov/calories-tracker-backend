@@ -2,29 +2,29 @@ import { IsString, IsNumber } from 'class-validator';
 
 export class CreateMealDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsNumber()
-  kcal: number;
+  kcal!: number;
 
   @IsNumber()
-  fat: number;
+  fat!: number;
 
   @IsNumber()
-  saturatedFat: number;
+  saturatedFat!: number;
 
   @IsNumber()
-  protein: number;
+  protein!: number;
 
   @IsNumber()
-  carb: number;
+  carb!: number;
 
   @IsNumber()
-  sugar: number;
+  sugar!: number;
 
   @IsNumber()
-  salt: number;
+  salt!: number;
 
   @IsNumber()
-  fibre: number;
+  fibre!: number;
 }

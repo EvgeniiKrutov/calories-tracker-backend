@@ -15,7 +15,7 @@ import { UpdateRecordDto } from '../../dto/records/update-record.dto';
 import { Record } from './record.entity';
 import { RecordResponseDto } from '../../dto/records/record-response.dto';
 import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
-import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
+import { PaginatedResponseDto } from '../../dto/common/paginated-response.dto';
 import { DailySummaryQueryDto } from '../../dto/records/daily-summary-query.dto';
 import { DailySummaryResponseDto } from '../../dto/records/daily-summary-response.dto';
 import { ChartQueryDto } from '../../dto/records/chart-query.dto';

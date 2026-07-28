@@ -6,6 +6,7 @@ A NestJS + TypeORM REST API for tracking meals and daily calorie/nutrition intak
 
 - **Meals** — a catalog of foods with per-portion nutrition values.
 - **Records** — logged consumption entries that reference a meal for a given user, date, and portion size (in grams).
+- **Limits** — per-user daily targets for calories, saturated fat, sugar, and salt (one record per user).
 - **Daily summary** — aggregated nutrition totals for a user on a specific day.
 - **Charts** — time-series data for a chosen nutrient over a week, month, or custom range.
 - Pagination on list endpoints, request validation, and CORS enabled.
@@ -87,6 +88,16 @@ Nutrition values represent the meal's reference portion. Records scale these by 
 | grams         | float  | Portion size consumed                |
 | kcal, fat, saturatedFat, protein, carb, sugar, salt, fibre | float | Computed nutrition for the portion |
 
+### Limit
+| Field         | Type   | Description                          |
+|---------------|--------|--------------------------------------|
+| id            | uuid   | Generated identifier                 |
+| userId        | uuid   | Owning user (unique — one row per user) |
+| kcal          | float  | Daily calorie limit                  |
+| saturatedFat  | float  | Daily saturated fat limit            |
+| sugar         | float  | Daily sugar limit                    |
+| salt          | float  | Daily salt limit                     |
+
 ## API Endpoints
 
 Base URL: `http://localhost:3000/api`
@@ -139,9 +150,43 @@ Base URL: `http://localhost:3000/api`
 }
 ```
 
+### Limits
+
+Limits are keyed by `userId` — each user has at most one limits record.
+
+| Method | Endpoint          | Description                                  |
+|--------|-------------------|----------------------------------------------|
+| GET    | /limits           | List all limits (paginated)                   |
+| GET    | /limits/:userId   | Get a user's limits                           |
+| POST   | /limits           | Create limits for a user                      |
+| PUT    | /limits/:userId   | Update a user's limits (partial)              |
+| DELETE | /limits/:userId   | Delete a user's limits                        |
+
+`POST` returns `409 Conflict` if the user already has limits; use `PUT` to change them.
+`GET`/`PUT`/`DELETE` return `404` when the user has no limits record.
+
+**Create body:**
+```json
+{
+  "userId": "11111111-1111-1111-1111-111111111111",
+  "kcal": 2000,
+  "saturatedFat": 20,
+  "sugar": 30,
+  "salt": 6
+}
+```
+
+**Update body** — all fields optional, `userId` is taken from the path:
+```json
+{
+  "kcal": 2200,
+  "sugar": 25
+}
+```
+
 ## Query Parameters
 
-### Pagination (`GET /meals`, `GET /records`)
+### Pagination (`GET /meals`, `GET /records`, `GET /limits`)
 | Param | Type | Default | Description               |
 |-------|------|---------|---------------------------|
 | page  | int  | 1       | Page number (min 1)       |
@@ -184,10 +229,12 @@ Example: `GET /api/records/chart?userId=<uuid>&period=week&category=kcal`
 ├── main.ts                  # App bootstrap, global prefix, validation, CORS
 ├── app.module.ts            # Root module, TypeORM + Config setup
 ├── routes/
+│   ├── limits/              # Limit module, controller, service, entity
 │   ├── meals/               # Meal module, controller, service, entity
 │   └── records/             # Record module, controller, service, entity
 ├── dto/
 │   ├── common/              # Pagination DTOs
+│   ├── limits/              # Limit create/update DTOs
 │   ├── meals/               # Meal create/update DTOs
 │   └── records/             # Record, summary, and chart DTOs
 ├── types/

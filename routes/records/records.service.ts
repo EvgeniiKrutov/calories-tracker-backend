@@ -31,7 +31,7 @@ export class RecordsService {
   ): Promise<PaginatedResponseDto<Record>> {
     const { page, limit } = query;
     const [data, total] = await this.recordsRepository.findAndCount({
-      order: { date: 'DESC' },
+      order: { date: 'DESC', category: 'DESC' },
       skip: (page - 1) * limit,
       take: limit,
     });

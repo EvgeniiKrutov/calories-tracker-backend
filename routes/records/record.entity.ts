@@ -3,47 +3,47 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('records')
 export class Record {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'uuid' })
-  userId: string;
+  userId!: string;
 
   @Column({ type: 'uuid' })
-  mealId: string;
+  mealId!: string;
 
   @Column({ type: 'varchar' })
-  mealName: string;
+  mealName!: string;
 
   @Column({ type: 'varchar' })
-  category: string;
+  category!: string;
 
   @Column({ type: 'varchar' })
-  date: string;
+  date!: string;
 
   @Column({ type: 'float' })
-  grams: number;
+  grams!: number;
 
   @Column({ type: 'float' })
-  kcal: number;
+  kcal!: number;
 
   @Column({ type: 'float' })
-  fat: number;
+  fat!: number;
 
   @Column({ type: 'float' })
-  saturatedFat: number;
+  saturatedFat!: number;
 
   @Column({ type: 'float' })
-  protein: number;
+  protein!: number;
 
   @Column({ type: 'float' })
-  carb: number;
+  carb!: number;
 
   @Column({ type: 'float' })
-  sugar: number;
+  sugar!: number;
 
   @Column({ type: 'float' })
-  salt: number;
+  salt!: number;
 
   @Column({ type: 'float' })
-  fibre: number;
+  fibre!: number;
 }

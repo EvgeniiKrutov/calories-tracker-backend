@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Meal } from './meal.entity';
-import { CreateMealDto } from 'dto/meals/create-meal.dto';
-import { UpdateMealDto } from 'dto/meals/update-meal.dto';
-import { PaginationQueryDto } from 'dto/common/pagination-query.dto';
-import { PaginatedResponseDto } from 'dto/common/paginated-response.dto';
+import { CreateMealDto } from '../../dto/meals/create-meal.dto';
+import { UpdateMealDto } from '../../dto/meals/update-meal.dto';
+import { PaginationQueryDto } from '../../dto/common/pagination-query.dto';
+import { PaginatedResponseDto } from '../../dto/common/paginated-response.dto';
 import { roundNumericFields } from '../../utils/rounding';
 
 const MEAL_NUMERIC_FIELDS: (keyof Meal)[] = [

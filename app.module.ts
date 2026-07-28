@@ -3,8 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RecordsModule } from './routes/records/records.module';
 import { Record } from './routes/records/record.entity';
-import { MealsModule } from 'routes/meals/meals.module';
+import { MealsModule } from './routes/meals/meals.module';
 import { Meal } from './routes/meals/meal.entity';
+import { LimitsModule } from './routes/limits/limits.module';
+import { Limit } from './routes/limits/limit.entity';
 
 @Module({
   imports: [
@@ -22,12 +24,13 @@ import { Meal } from './routes/meals/meal.entity';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [Record, Meal],
+        entities: [Record, Meal, Limit],
         synchronize: true,
       }),
     }),
     RecordsModule,
     MealsModule,
+    LimitsModule,
   ],
 })
 export class AppModule {}
